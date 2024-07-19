@@ -1,0 +1,65 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudFormation template for EC2 instance with Jitsi Meet setup using Default VPC",
+  "Resources": {
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": "vpc-0abda4c0bd7be39e2",
+        "GroupDescription": "Allow SSH, HTTP, HTTPS, and Jitsi Meet ports",
+        "SecurityGroupIngress": [
+          { "IpProtocol": "tcp", "FromPort": 22, "ToPort": 22, "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": 80, "ToPort": 80, "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": 443, "ToPort": 443, "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "udp", "FromPort": 10000, "ToPort": 10000, "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "udp", "FromPort": 3478, "ToPort": 3478, "CidrIp": "0.0.0.0/0" },
+          { "IpProtocol": "tcp", "FromPort": 5349, "ToPort": 5349, "CidrIp": "0.0.0.0/0" }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "JitsiSecurityGroup"
+          }
+        ]
+      }
+    },
+    "KeyPair": {
+      "Type": "AWS::EC2::KeyPair",
+      "Properties": {
+        "KeyName": "JitsiKeyPair"
+      }
+    },
+    "EC2Instance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "InstanceType": "c5.xlarge",
+        "KeyName": { "Ref": "KeyPair" },
+        "ImageId": "ami-07d20571c32ba6cdc",
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "SubnetId": { "Ref": "AWS::EC2::Subnet::Id" },
+            "GroupSet": [ { "Ref": "SecurityGroup" } ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "JitsiEC2Instance"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceId": {
+      "Description": "InstanceId of the newly created EC2 instance",
+      "Value": { "Ref": "EC2Instance" }
+    },
+    "PublicIP": {
+      "Description": "Public IP address of the newly created EC2 instance",
+      "Value": { "Fn::GetAtt": [ "EC2Instance", "PublicIp" ] }
+    }
+  }
+}
