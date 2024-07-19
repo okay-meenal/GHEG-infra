@@ -5,7 +5,7 @@
     "SecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "VpcId": "vpc-0abda4c0bd7be39e2",  
+        "VpcId": "vpc-0abda4c0bd7be39e2",
         "GroupDescription": "Allow SSH, HTTP, HTTPS, and Jitsi Meet ports",
         "SecurityGroupIngress": [
           { "IpProtocol": "tcp", "FromPort": 22, "ToPort": 22, "CidrIp": "0.0.0.0/0" },
@@ -27,13 +27,13 @@
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "c5.xlarge",
-        "KeyName": "JitsiKeyPair",  
-        "ImageId": "ami-07d20571c32ba6cdc",  
+        "KeyName": "JitsiKeyPair",  // Ensure this key pair exists in your region
+        "ImageId": "ami-07d20571c32ba6cdc",
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "SubnetId": "subnet-0bb1c79de3EXAMPLE",  
+            "SubnetId": "subnet-0bb1c79de3EXAMPLE",  // Replace with your Subnet ID
             "GroupSet": [
               { "Ref": "SecurityGroup" }
             ]
