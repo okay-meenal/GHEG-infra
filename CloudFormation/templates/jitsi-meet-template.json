@@ -27,13 +27,13 @@
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "c5.xlarge",
-        "KeyName": "jitsikey",  // Ensure this key pair exists in your region
+        "KeyName": "jitsikey",
         "ImageId": "ami-07d20571c32ba6cdc",
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "SubnetId": "subnet-02801183851fe1808",  // Replace with your Subnet ID
+            "SubnetId": "subnet-02801183851fe1808",
             "GroupSet": [
               { "Ref": "SecurityGroup" }
             ]
