@@ -5,7 +5,7 @@
     "SecurityGroup": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "VpcId": "vpc-0abda4c0bd7be39e2",
+        "VpcId": "vpc-0abda4c0bd7be39e2",  
         "GroupDescription": "Allow SSH, HTTP, HTTPS, and Jitsi Meet ports",
         "SecurityGroupIngress": [
           { "IpProtocol": "tcp", "FromPort": 22, "ToPort": 22, "CidrIp": "0.0.0.0/0" },
@@ -23,24 +23,20 @@
         ]
       }
     },
-    "KeyPair": {
-      "Type": "AWS::EC2::KeyPair",
-      "Properties": {
-        "KeyName": "JitsiKeyPair"
-      }
-    },
     "EC2Instance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "InstanceType": "c5.xlarge",
-        "KeyName": { "Ref": "KeyPair" },
-        "ImageId": "ami-07d20571c32ba6cdc",
+        "KeyName": "JitsiKeyPair",  
+        "ImageId": "ami-07d20571c32ba6cdc",  
         "NetworkInterfaces": [
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "SubnetId": { "Ref": "AWS::EC2::Subnet::Id" },
-            "GroupSet": [ { "Ref": "SecurityGroup" } ]
+            "SubnetId": "subnet-0bb1c79de3EXAMPLE",  
+            "GroupSet": [
+              { "Ref": "SecurityGroup" }
+            ]
           }
         ],
         "Tags": [
@@ -48,7 +44,25 @@
             "Key": "Name",
             "Value": "JitsiEC2Instance"
           }
-        ]
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "apt-get update\n",
+                "apt-get install -y wget\n",
+                "wget https://download.jitsi.org/jitsi-key.gpg.key\n",
+                "apt-key add jitsi-key.gpg.key\n",
+                "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.list.d/jitsi-stable.list\n",
+                "apt-get update\n",
+                "apt-get -y install jitsi-meet\n",
+                "echo 'Installation complete.'\n"
+              ]
+            ]
+          }
+        }
       }
     }
   },
